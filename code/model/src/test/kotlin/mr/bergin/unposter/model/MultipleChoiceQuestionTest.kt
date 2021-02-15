@@ -1,7 +1,9 @@
 package mr.bergin.unposter.model
 
-import io.kotest.assertions.arrow.either.shouldBeLeft
-import io.kotest.assertions.arrow.either.shouldBeRight
+import arrow.core.nel
+import arrow.core.orNull
+import io.kotest.assertions.arrow.validation.shouldBeInvalid
+import io.kotest.assertions.arrow.validation.shouldBeValid
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import mr.bergin.unposter.model.MultipleChoiceQuestion.Companion.Error.*
@@ -12,7 +14,7 @@ class MultipleChoiceQuestionTest : StringSpec({
 
         val result = MultipleChoiceQuestion("Baz", choices)
 
-        result shouldBeLeft NotEnoughCorrectChoices(choices)
+        result shouldBeInvalid NotEnoughCorrectChoices(choices).nel()
     }
 
     "when a multiple choice question has no incorrect answers, then return an error" {
@@ -20,7 +22,7 @@ class MultipleChoiceQuestionTest : StringSpec({
 
         val result = MultipleChoiceQuestion("Baz", choices)
 
-        result shouldBeLeft NotEnoughInCorrectChoices(choices)
+        result shouldBeInvalid NotEnoughInCorrectChoices(choices).nel()
     }
 
     "when no display name is provided to a multiple choice question, then return an error" {
@@ -31,7 +33,7 @@ class MultipleChoiceQuestionTest : StringSpec({
 
         val result = MultipleChoiceQuestion("", choices)
 
-        result shouldBeLeft BlankDisplay
+        result shouldBeInvalid BlankDisplay.nel()
     }
 
     "when enough choices and display name are provided, then return a multiple choice question" {
@@ -43,7 +45,7 @@ class MultipleChoiceQuestionTest : StringSpec({
 
         val result = MultipleChoiceQuestion(displayName, choices)
 
-        result shouldBeRight { mcq ->
+        result shouldBeValid { (mcq) ->
             mcq.choices shouldBe choices
             mcq.display shouldBe displayName
         }
