@@ -43,14 +43,14 @@ sealed class Choice(val display: String, val explanation: String) {
             object BlankExplanation : Error()
         }
 
-        private fun validate(display: String, explanation: String): Either<Error, Pair<String, String>> {
+        private fun validate(display: String, explanation: String): Either<Error, Unit> {
             if (display.isBlank()) {
                 return Either.left(Error.BlankDisplay)
             }
             if (explanation.isBlank()) {
                 return Either.left(Error.BlankExplanation)
             }
-            return Either.right(display to explanation)
+            return Either.right(Unit)
         }
     }
 
