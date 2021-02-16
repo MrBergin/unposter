@@ -1,10 +1,12 @@
 package mr.bergin.unposter.model
 
+import arrow.core.extensions.validated.foldable.size
 import arrow.core.nel
 import arrow.core.orNull
 import io.kotest.assertions.arrow.validation.shouldBeInvalid
 import io.kotest.assertions.arrow.validation.shouldBeValid
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import mr.bergin.unposter.model.MultipleChoiceQuestion.Companion.Error.*
 
@@ -48,6 +50,14 @@ class MultipleChoiceQuestionTest : StringSpec({
         result shouldBeValid { (mcq) ->
             mcq.choices shouldBe choices
             mcq.display shouldBe displayName
+        }
+    }
+
+    "when many things are wrong, then return many errors" {
+        val result = MultipleChoiceQuestion("", listOf())
+
+        result shouldBeInvalid  {
+            it.e.size shouldBeGreaterThan 1
         }
     }
 })

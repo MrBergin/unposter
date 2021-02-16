@@ -2,16 +2,11 @@ package mr.bergin.unposter.model
 
 import arrow.core.*
 import arrow.core.extensions.applicativeNel
+import arrow.core.extensions.validated.functor.map
 import mr.bergin.unposter.model.Choice.CorrectChoice
+import mr.bergin.unposter.model.Choice.IncorrectChoice
 import mr.bergin.unposter.model.MultipleChoiceQuestion.Companion.Error.NotEnoughCorrectChoices
 import mr.bergin.unposter.model.MultipleChoiceQuestion.Companion.Error.NotEnoughInCorrectChoices
-
-/**
- * This exists until I better understand how to utilise error validation in Arrow.
- */
-fun <Type, Error> Type.validate(predicate: () -> Boolean, error: () -> Error): Validated<Nel<Error>, Type> {
-    return if (predicate()) error().invalid().toValidatedNel() else valid()
-}
 
 sealed class Question
 
@@ -31,10 +26,10 @@ class MultipleChoiceQuestion private constructor(
             display: String,
             choices: List<Choice>,
         ) = Validated.applicativeNel<Error>().tupledN(
-            validate({ display.isBlank() }, { Error.BlankDisplay }),
-            validate({ choices.none { it is CorrectChoice } }, { NotEnoughCorrectChoices(choices) }),
-            validate({ choices.none { it is Choice.IncorrectChoice } }, { NotEnoughInCorrectChoices(choices) }),
-        ).fix().map { MultipleChoiceQuestion(display, choices) }
+            `if` { display.isBlank() } then { Error.BlankDisplay },
+            `if` { choices.none { it is CorrectChoice } } then { NotEnoughCorrectChoices(choices) },
+            `if` { choices.none { it is IncorrectChoice } } then { NotEnoughInCorrectChoices(choices) },
+        ).map { MultipleChoiceQuestion(display, choices) }
     }
 }
 
@@ -47,9 +42,9 @@ sealed class Choice(val display: String, val explanation: String) {
         }
 
         private fun validate(display: String, explanation: String) = Validated.applicativeNel<Error>().tupledN(
-            validate({ display.isBlank() }, { Error.BlankDisplay }),
-            validate({ explanation.isBlank() }, { Error.BlankExplanation })
-        ).fix()
+            `if` { display.isBlank() } then { Error.BlankDisplay },
+            `if` { explanation.isBlank() } then { Error.BlankExplanation }
+        )
     }
 
     class IncorrectChoice private constructor(display: String, explanation: String) : Choice(display, explanation) {

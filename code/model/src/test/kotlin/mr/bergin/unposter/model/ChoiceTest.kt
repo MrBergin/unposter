@@ -4,6 +4,7 @@ import arrow.core.nel
 import io.kotest.assertions.arrow.validation.shouldBeInvalid
 import io.kotest.assertions.arrow.validation.shouldBeValid
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
 import mr.bergin.unposter.model.Choice.Companion.Error.BlankDisplay
@@ -54,10 +55,26 @@ class ChoiceTest : StringSpec({
 
         val result = Choice.IncorrectChoice(display, explanation)
 
-        result shouldBeValid  { (incorrectChoice) ->
+        result shouldBeValid { (incorrectChoice) ->
             incorrectChoice.shouldBeTypeOf<Choice.IncorrectChoice>()
             incorrectChoice.display shouldBe display
             incorrectChoice.explanation shouldBe explanation
+        }
+    }
+
+    "when many things are wrong with an incorrect choice, then return many errors" {
+        val result = Choice.IncorrectChoice("","")
+
+        result shouldBeInvalid  {
+            it.e.size shouldBeGreaterThan 1
+        }
+    }
+
+    "when many things are wrong with a correct choice, then return many errors" {
+        val result = Choice.CorrectChoice("", "")
+
+        result shouldBeInvalid  {
+            it.e.size shouldBeGreaterThan 1
         }
     }
 })
