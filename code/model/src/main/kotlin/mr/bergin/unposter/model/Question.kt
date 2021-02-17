@@ -1,12 +1,12 @@
 package mr.bergin.unposter.model
 
-import arrow.core.*
+import arrow.core.Validated
 import arrow.core.extensions.applicativeNel
 import arrow.core.extensions.validated.functor.map
+import arrow.core.invalidNel
+import arrow.core.valid
 import mr.bergin.unposter.model.Choice.CorrectChoice
 import mr.bergin.unposter.model.Choice.IncorrectChoice
-import mr.bergin.unposter.model.MultipleChoiceQuestion.Companion.Error.NotEnoughCorrectChoices
-import mr.bergin.unposter.model.MultipleChoiceQuestion.Companion.Error.NotEnoughInCorrectChoices
 
 sealed class Question
 
@@ -16,49 +16,92 @@ class MultipleChoiceQuestion private constructor(
 ) : Question() {
 
     companion object {
-        sealed class Error {
-            object BlankDisplay : Error()
-            data class NotEnoughCorrectChoices(val choices: List<Choice>) : Error()
-            data class NotEnoughInCorrectChoices(val choices: List<Choice>) : Error()
-        }
-
-        operator fun invoke(
-            display: String,
-            choices: List<Choice>,
-        ) = Validated.applicativeNel<Error>().tupledN(
-            `if` { display.isBlank() } then { Error.BlankDisplay },
-            `if` { choices.none { it is CorrectChoice } } then { NotEnoughCorrectChoices(choices) },
-            `if` { choices.none { it is IncorrectChoice } } then { NotEnoughInCorrectChoices(choices) },
-        ).map { MultipleChoiceQuestion(display, choices) }
+        operator fun invoke(display: String, choices: List<Choice>) =
+            Validated.applicativeNel<MultipleChoiceQuestionError>().tupledN(
+                MultipleChoiceQuestionError.BlankDisplay.validate(display),
+                MultipleChoiceQuestionError.NotEnoughCorrectChoices.validate(choices),
+                MultipleChoiceQuestionError.NotEnoughInCorrectChoices.validate(choices),
+            ).map {
+                MultipleChoiceQuestion(display, choices)
+            }
     }
 }
 
-sealed class Choice(val display: String, val explanation: String) {
-
-    companion object {
-        sealed class Error {
-            object BlankDisplay : Error()
-            object BlankExplanation : Error()
+sealed class MultipleChoiceQuestionError {
+    object BlankDisplay : MultipleChoiceQuestionError() {
+        fun validate(display: String) = if (display.isBlank()) {
+            this.invalidNel()
+        } else {
+            display.valid()
         }
-
-        private fun validate(display: String, explanation: String) = Validated.applicativeNel<Error>().tupledN(
-            `if` { display.isBlank() } then { Error.BlankDisplay },
-            `if` { explanation.isBlank() } then { Error.BlankExplanation }
-        )
     }
 
+    data class NotEnoughCorrectChoices(val choices: List<Choice>) : MultipleChoiceQuestionError() {
+        companion object {
+            fun validate(choices: List<Choice>) = if (choices.noneAre<CorrectChoice>()) {
+                NotEnoughCorrectChoices(choices).invalidNel()
+            } else {
+                choices.valid()
+            }
+        }
+    }
+
+    data class NotEnoughInCorrectChoices(val choices: List<Choice>) : MultipleChoiceQuestionError() {
+        companion object {
+            fun validate(choices: List<Choice>) = if (choices.noneAre<IncorrectChoice>()) {
+                NotEnoughInCorrectChoices(choices).invalidNel()
+            } else {
+                choices.valid()
+            }
+        }
+    }
+}
+
+sealed class Choice(
+    val display: String,
+    val explanation: String,
+) {
     class IncorrectChoice private constructor(display: String, explanation: String) : Choice(display, explanation) {
         companion object {
-            operator fun invoke(display: String, explanation: String) =
-                validate(display, explanation).map { IncorrectChoice(display, explanation) }
+            operator fun invoke(display: String, explanation: String) = Validated.applicativeNel<ChoiceError>().tupledN(
+                ChoiceError.BlankDisplay.validate(display),
+                ChoiceError.BlankExplanation.validate(explanation)
+            ).map {
+                IncorrectChoice(display, explanation)
+            }
         }
     }
 
     class CorrectChoice private constructor(display: String, explanation: String) : Choice(display, explanation) {
         companion object {
-            operator fun invoke(display: String, explanation: String) =
-                validate(display, explanation).map { CorrectChoice(display, explanation) }
+            operator fun invoke(display: String, explanation: String) = Validated.applicativeNel<ChoiceError>().tupledN(
+                ChoiceError.BlankDisplay.validate(display),
+                ChoiceError.BlankExplanation.validate(explanation)
+            ).map {
+                CorrectChoice(display, explanation)
+            }
         }
     }
 }
+
+sealed class ChoiceError {
+    object BlankDisplay : ChoiceError() {
+        fun validate(display: String) = if (display.isBlank()) {
+            this.invalidNel()
+        } else {
+            display.valid()
+        }
+    }
+
+    object BlankExplanation : ChoiceError() {
+        fun validate(explanation: String) = if (explanation.isBlank()) {
+            this.invalidNel()
+        } else {
+            explanation.valid()
+        }
+    }
+}
+
+
+
 

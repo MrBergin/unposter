@@ -1,6 +1,5 @@
 package mr.bergin.unposter.model
 
-import arrow.core.extensions.validated.foldable.size
 import arrow.core.nel
 import arrow.core.orNull
 import io.kotest.assertions.arrow.validation.shouldBeInvalid
@@ -8,7 +7,7 @@ import io.kotest.assertions.arrow.validation.shouldBeValid
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
-import mr.bergin.unposter.model.MultipleChoiceQuestion.Companion.Error.*
+import mr.bergin.unposter.model.MultipleChoiceQuestionError.*
 
 class MultipleChoiceQuestionTest : StringSpec({
     "when a multiple choice question has no correct answers, then return an error" {
@@ -56,7 +55,7 @@ class MultipleChoiceQuestionTest : StringSpec({
     "when many things are wrong, then return many errors" {
         val result = MultipleChoiceQuestion("", listOf())
 
-        result shouldBeInvalid  {
+        result shouldBeInvalid {
             it.e.size shouldBeGreaterThan 1
         }
     }

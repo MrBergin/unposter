@@ -7,8 +7,8 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
-import mr.bergin.unposter.model.Choice.Companion.Error.BlankDisplay
-import mr.bergin.unposter.model.Choice.Companion.Error.BlankExplanation
+import mr.bergin.unposter.model.ChoiceError.BlankDisplay
+import mr.bergin.unposter.model.ChoiceError.BlankExplanation
 
 class ChoiceTest : StringSpec({
 
@@ -63,9 +63,9 @@ class ChoiceTest : StringSpec({
     }
 
     "when many things are wrong with an incorrect choice, then return many errors" {
-        val result = Choice.IncorrectChoice("","")
+        val result = Choice.IncorrectChoice("", "")
 
-        result shouldBeInvalid  {
+        result shouldBeInvalid {
             it.e.size shouldBeGreaterThan 1
         }
     }
@@ -73,7 +73,7 @@ class ChoiceTest : StringSpec({
     "when many things are wrong with a correct choice, then return many errors" {
         val result = Choice.CorrectChoice("", "")
 
-        result shouldBeInvalid  {
+        result shouldBeInvalid {
             it.e.size shouldBeGreaterThan 1
         }
     }
