@@ -48,7 +48,7 @@ class MultipleChoiceQuestionTest : StringSpec({
 
         result shouldBeValid { (mcq) ->
             mcq.choices shouldBe choices
-            mcq.display shouldBe displayName
+            mcq.display shouldBe McqDisplay(displayName)
         }
     }
 
