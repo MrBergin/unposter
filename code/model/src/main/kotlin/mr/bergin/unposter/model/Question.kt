@@ -10,10 +10,8 @@ import mr.bergin.unposter.model.Choice.IncorrectChoice
 
 sealed class Question
 
-inline class McqDisplay(val value: String)
-
 class MultipleChoiceQuestion private constructor(
-    val display: McqDisplay,
+    val display: String,
     val choices: List<Choice>,
 ) : Question() {
 
@@ -24,7 +22,7 @@ class MultipleChoiceQuestion private constructor(
                 MultipleChoiceQuestionError.NotEnoughCorrectChoices.validate(choices),
                 MultipleChoiceQuestionError.NotEnoughInCorrectChoices.validate(choices),
             ).map {
-                MultipleChoiceQuestion(McqDisplay(display), choices)
+                MultipleChoiceQuestion(display, choices)
             }
     }
 }
