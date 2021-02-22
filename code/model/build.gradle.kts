@@ -11,6 +11,7 @@ version = "0.0.1"
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("io.arrow-kt:arrow-core:0.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.1.1")
 
     testImplementation("io.kotest:kotest-assertions-core:4.4.1")
     testImplementation("io.kotest:kotest-assertions-arrow-jvm:4.4.1")

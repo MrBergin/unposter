@@ -3,6 +3,7 @@ rootProject.name = "unposter"
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
+        maven(url = "https://kotlin.bintray.com/kotlinx/")
         maven("https://dl.bintray.com/arrow-kt/arrow-kt/")
     }
 }
