@@ -8,15 +8,19 @@ import arrow.core.valid
 import mr.bergin.unposter.model.Choice.CorrectChoice
 import mr.bergin.unposter.model.Choice.IncorrectChoice
 
-sealed class Question
+sealed class Question<out A: Answer> {
+    abstract val answer: A
+}
 
 class MultipleChoiceQuestion private constructor(
     val display: String,
-    val choices: List<Choice>,
-) : Question() {
+    val choices: Set<Choice>,
+) : Question<MultipleChoiceAnswer>() {
+
+    override val answer = MultipleChoiceAnswer(choices.filterIsInstance<CorrectChoice>().toSet())
 
     companion object {
-        operator fun invoke(display: String, choices: List<Choice>) =
+        operator fun invoke(display: String, choices: Set<Choice>) =
             Validated.applicativeNel<MultipleChoiceQuestionError>().tupledN(
                 MultipleChoiceQuestionError.BlankDisplay.validate(display),
                 MultipleChoiceQuestionError.NotEnoughCorrectChoices.validate(choices),
@@ -36,9 +40,9 @@ sealed class MultipleChoiceQuestionError {
         }
     }
 
-    data class NotEnoughCorrectChoices(val choices: List<Choice>) : MultipleChoiceQuestionError() {
+    data class NotEnoughCorrectChoices(val choices: Set<Choice>) : MultipleChoiceQuestionError() {
         companion object {
-            fun validate(choices: List<Choice>) = if (choices.noneAre<CorrectChoice>()) {
+            fun validate(choices: Set<Choice>) = if (choices.noneAre<CorrectChoice>()) {
                 NotEnoughCorrectChoices(choices).invalidNel()
             } else {
                 choices.valid()
@@ -46,9 +50,9 @@ sealed class MultipleChoiceQuestionError {
         }
     }
 
-    data class NotEnoughInCorrectChoices(val choices: List<Choice>) : MultipleChoiceQuestionError() {
+    data class NotEnoughInCorrectChoices(val choices: Set<Choice>) : MultipleChoiceQuestionError() {
         companion object {
-            fun validate(choices: List<Choice>) = if (choices.noneAre<IncorrectChoice>()) {
+            fun validate(choices: Set<Choice>) = if (choices.noneAre<IncorrectChoice>()) {
                 NotEnoughInCorrectChoices(choices).invalidNel()
             } else {
                 choices.valid()

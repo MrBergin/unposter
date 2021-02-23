@@ -1,5 +1,5 @@
 package mr.bergin.unposter.model
 
-class User private constructor(
+class User(
     val name: String
 )

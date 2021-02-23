@@ -1,11 +1,18 @@
 package mr.bergin.unposter.model
 
-import arrow.core.Option
 import kotlinx.datetime.Instant
 
-class AskedQuestion(
+class AskedQuestion<out Q: Question<A>, A: Answer> (
     val user: User,
     val timestamp: Instant,
-    val question: Question,
-    val answer: Option<List<Choice>>,
-)
+    val question: Q,
+) {
+    fun answer(answer: A) = AnsweredQuestion(this, answer)
+}
+
+class AnsweredQuestion<A: Answer>(
+    val askedQuestion: AskedQuestion<Question<A>, A>,
+    val answer: A,
+) {
+    val result = askedQuestion.question.answer.matches(answer)
+}

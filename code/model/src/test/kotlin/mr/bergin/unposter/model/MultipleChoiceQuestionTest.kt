@@ -11,7 +11,7 @@ import mr.bergin.unposter.model.MultipleChoiceQuestionError.*
 
 class MultipleChoiceQuestionTest : StringSpec({
     "when a multiple choice question has no correct answers, then return an error" {
-        val choices = listOf(Choice.IncorrectChoice("foo", "bar").orNull()!!)
+        val choices = setOf(Choice.IncorrectChoice("foo", "bar").orNull()!!)
 
         val result = MultipleChoiceQuestion("Baz", choices)
 
@@ -19,7 +19,7 @@ class MultipleChoiceQuestionTest : StringSpec({
     }
 
     "when a multiple choice question has no incorrect answers, then return an error" {
-        val choices = listOf(Choice.CorrectChoice("foo", "bar").orNull()!!)
+        val choices = setOf(Choice.CorrectChoice("foo", "bar").orNull()!!)
 
         val result = MultipleChoiceQuestion("Baz", choices)
 
@@ -27,7 +27,7 @@ class MultipleChoiceQuestionTest : StringSpec({
     }
 
     "when no display name is provided to a multiple choice question, then return an error" {
-        val choices = listOf(
+        val choices = setOf(
             Choice.IncorrectChoice("foo", "bar").orNull()!!,
             Choice.CorrectChoice("foo", "bar").orNull()!!
         )
@@ -39,7 +39,7 @@ class MultipleChoiceQuestionTest : StringSpec({
 
     "when enough choices and display name are provided, then return a multiple choice question" {
         val displayName = "baz"
-        val choices = listOf(
+        val choices = setOf(
             Choice.IncorrectChoice("foo", "bar").orNull()!!,
             Choice.CorrectChoice("foo", "bar").orNull()!!
         )
@@ -53,7 +53,7 @@ class MultipleChoiceQuestionTest : StringSpec({
     }
 
     "when many things are wrong, then return many errors" {
-        val result = MultipleChoiceQuestion("", listOf())
+        val result = MultipleChoiceQuestion("", setOf())
 
         result shouldBeInvalid {
             it.e.size shouldBeGreaterThan 1
