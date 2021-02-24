@@ -1,36 +1,32 @@
 package mr.bergin.unposter.model
 
-import arrow.core.orNull
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import kotlinx.datetime.Clock
+import mr.bergin.unposter.model.AnswerResult.Right
+import mr.bergin.unposter.model.AnswerResult.Wrong
 
 class AnsweredQuestionTest : StringSpec({
 
     "when question is answered incorrectly, then result should be wrong" {
-        val choices = setOf(Choice.CorrectChoice("Foo", "Bar"), Choice.IncorrectChoice("Baz", "Bart")).map {
-            it.orNull()!!
-        }.toSet()
-        val mcq = MultipleChoiceQuestion("Hello", choices).orNull()!!
-        val askedQuestion = AskedQuestion(User("Foo"), Clock.System.now(), mcq)
+        val askedQuestion = validUser().ask(validMultipleChoiceQuestion())
+        val incorrectAnswer = MultipleChoiceAnswer(
+            askedQuestion.question.choices.filterIsInstance<Choice.IncorrectChoice>().toSet()
+        )
 
-        val incorrectAnswer = choices.filterIsInstance<Choice.IncorrectChoice>().toSet()
-        val result = askedQuestion.answer(MultipleChoiceAnswer(incorrectAnswer)).result
+        val result = askedQuestion.answerWith(incorrectAnswer)
 
-        result shouldBe AnswerResult.Wrong
+        result.result shouldBe Wrong
     }
 
     "when question is answered correctly, then result should be wrong" {
-        val choices = setOf(Choice.CorrectChoice("Foo", "Bar"), Choice.IncorrectChoice("Baz", "Bart")).map {
-            it.orNull()!!
-        }.toSet()
-        val mcq = MultipleChoiceQuestion("Hello", choices).orNull()!!
-        val askedQuestion = AskedQuestion(User("Foo"), Clock.System.now(), mcq)
+        val askedQuestion = validUser().ask(validMultipleChoiceQuestion())
+        val correctAnswer = MultipleChoiceAnswer(
+            askedQuestion.question.choices.filterIsInstance<Choice.CorrectChoice>().toSet()
+        )
 
-        val correctAnswer = choices.filterIsInstance<Choice.CorrectChoice>().toSet()
-        val result = askedQuestion.answer(MultipleChoiceAnswer(correctAnswer)).result
+        val result = askedQuestion.answerWith(correctAnswer)
 
-        result shouldBe AnswerResult.Right
+        result.result shouldBe Right
     }
 
 })
