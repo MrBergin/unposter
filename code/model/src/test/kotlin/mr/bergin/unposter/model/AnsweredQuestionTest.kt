@@ -13,9 +13,9 @@ class AnsweredQuestionTest : StringSpec({
             askedQuestion.question.choices.filterIsInstance<Choice.IncorrectChoice>().toSet()
         )
 
-        val result = askedQuestion.answerWith(incorrectAnswer)
+        val answeredQuestion = askedQuestion.answerWith(incorrectAnswer)
 
-        result.result shouldBe Wrong
+        answeredQuestion.result shouldBe Wrong
     }
 
     "when question is answered correctly, then result should be wrong" {
@@ -24,9 +24,9 @@ class AnsweredQuestionTest : StringSpec({
             askedQuestion.question.choices.filterIsInstance<Choice.CorrectChoice>().toSet()
         )
 
-        val result = askedQuestion.answerWith(correctAnswer)
+        val answeredQuestion = askedQuestion.answerWith(correctAnswer)
 
-        result.result shouldBe Right
+        answeredQuestion.result shouldBe Right
     }
 
 })
