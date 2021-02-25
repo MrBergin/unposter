@@ -14,3 +14,4 @@ fun includeCode(projectName: String) {
 }
 
 includeCode("model")
+includeCode("cli")
