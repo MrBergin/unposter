@@ -7,43 +7,41 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
-import mr.bergin.unposter.model.ChoiceError.BlankDisplay
-import mr.bergin.unposter.model.ChoiceError.BlankExplanation
 
 class ChoiceTest : StringSpec({
 
     "when a blank name is given to a correct choice, then return an error" {
-        val result = Choice.CorrectChoice("", "explanation")
+        val result = CorrectChoice("", "explanation")
 
-        result shouldBeInvalid BlankDisplay.nel()
+        result shouldBeInvalid ChoiceDisplayIsBlank.nel()
     }
 
     "when a blank name is given to an incorrect choice, then return an error" {
-        val result = Choice.IncorrectChoice("", "explanation")
+        val result = IncorrectChoice("", "explanation")
 
-        result shouldBeInvalid BlankDisplay.nel()
+        result shouldBeInvalid ChoiceDisplayIsBlank.nel()
     }
 
     "when a blank explanation is given to a correct choice, then return an error" {
-        val result = Choice.CorrectChoice("display", "")
+        val result = CorrectChoice("display", "")
 
-        result shouldBeInvalid BlankExplanation.nel()
+        result shouldBeInvalid ChoiceExplanationIsBlank.nel()
     }
 
     "when a blank explanation is given to an incorrect choice, then return an error" {
-        val result = Choice.IncorrectChoice("display", "")
+        val result = IncorrectChoice("display", "")
 
-        result shouldBeInvalid BlankExplanation.nel()
+        result shouldBeInvalid ChoiceExplanationIsBlank.nel()
     }
 
     "when a a name and explanation are provided, then return a correct choice" {
         val display = "display"
         val explanation = "explanation"
 
-        val result = Choice.CorrectChoice(display, explanation)
+        val result = CorrectChoice(display, explanation)
 
         result shouldBeValid { (correctChoice) ->
-            correctChoice.shouldBeTypeOf<Choice.CorrectChoice>()
+            correctChoice.shouldBeTypeOf<CorrectChoice>()
             correctChoice.display shouldBe display
             correctChoice.explanation shouldBe explanation
         }
@@ -53,17 +51,17 @@ class ChoiceTest : StringSpec({
         val display = "display"
         val explanation = "explanation"
 
-        val result = Choice.IncorrectChoice(display, explanation)
+        val result = IncorrectChoice(display, explanation)
 
         result shouldBeValid { (incorrectChoice) ->
-            incorrectChoice.shouldBeTypeOf<Choice.IncorrectChoice>()
+            incorrectChoice.shouldBeTypeOf<IncorrectChoice>()
             incorrectChoice.display shouldBe display
             incorrectChoice.explanation shouldBe explanation
         }
     }
 
     "when many things are wrong with an incorrect choice, then return many errors" {
-        val result = Choice.IncorrectChoice("", "")
+        val result = IncorrectChoice("", "")
 
         result shouldBeInvalid {
             it.e.size shouldBeGreaterThan 1
@@ -71,7 +69,7 @@ class ChoiceTest : StringSpec({
     }
 
     "when many things are wrong with a correct choice, then return many errors" {
-        val result = Choice.CorrectChoice("", "")
+        val result = CorrectChoice("", "")
 
         result shouldBeInvalid {
             it.e.size shouldBeGreaterThan 1

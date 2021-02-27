@@ -10,7 +10,7 @@ class AnsweredQuestionTest : StringSpec({
     "when question is answered incorrectly, then result should be wrong" {
         val askedQuestion = validUser().ask(validMultipleChoiceQuestion())
         val incorrectAnswer = MultipleChoiceAnswer(
-            askedQuestion.question.choices.filterIsInstance<Choice.IncorrectChoice>().toSet()
+            askedQuestion.question.choices.filterIsInstance<IncorrectChoice>().toSet()
         )
 
         val answeredQuestion = askedQuestion.answerWith(incorrectAnswer)
@@ -21,7 +21,7 @@ class AnsweredQuestionTest : StringSpec({
     "when question is answered correctly, then result should be wrong" {
         val askedQuestion = validUser().ask(validMultipleChoiceQuestion())
         val correctAnswer = MultipleChoiceAnswer(
-            askedQuestion.question.choices.filterIsInstance<Choice.CorrectChoice>().toSet()
+            askedQuestion.question.choices.filterIsInstance<CorrectChoice>().toSet()
         )
 
         val answeredQuestion = askedQuestion.answerWith(correctAnswer)

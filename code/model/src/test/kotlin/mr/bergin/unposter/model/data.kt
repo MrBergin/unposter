@@ -4,7 +4,7 @@ import arrow.core.orNull
 
 fun validMultipleChoiceQuestion() = MultipleChoiceQuestion(
     "Hello",
-    setOf(Choice.CorrectChoice("Foo", "Bar"), Choice.IncorrectChoice("Baz", "Bart")).map {
+    setOf(CorrectChoice("Foo", "Bar"), IncorrectChoice("Baz", "Bart")).map {
         it.orNull()!!
     }.toSet()
 ).orNull()!!
