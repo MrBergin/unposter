@@ -1,46 +1,61 @@
 package mr.bergin.unposter.desktop
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.desktop.Window
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import arrow.core.orNull
 import mr.bergin.unposter.model.*
 
+@ExperimentalAnimationApi
 fun main() = Window {
     val user = User("Jordan")
-    var answerDisplay by remember { mutableStateOf("Waiting for answer...") }
-    val question = dummyMcq()
+    var answerDisplay by remember { mutableStateOf("") }
+    val question = dummyQuestions()
     val askedQuestion = user.ask(question)
 
+    @Composable
+    fun Choice.toButton() = Button(onClick = {
+        val answeredQuestion = run(::setOf)
+            .run(::MultipleChoiceAnswer)
+            .run(askedQuestion::answerWith)
+
+        answerDisplay = "${answeredQuestion.result}: $explanation"
+    }) {
+        Text(display)
+    }
+
     MaterialTheme {
-        Column {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(question.display)
-            Text(answerDisplay)
-            question.choices.forEach {
-                Button(onClick = {
-                    val answeredQuestion = it.run(::setOf)
-                        .run(::MultipleChoiceAnswer)
-                        .run(askedQuestion::answerWith)
-
-                    val answerResult = answeredQuestion.result
-                    val answerExplanation = answeredQuestion.answer.choices.first().explanation
-
-                    answerDisplay = "$answerResult: $answerExplanation"
-                }) {
-                    Text(it.display)
+            Spacer(Modifier.size(20.dp))
+            Row (verticalAlignment = Alignment.CenterVertically) {
+                question.choices.forEach {
+                    Spacer(Modifier.size(20.dp))
+                    it.toButton()
                 }
+                Spacer(Modifier.size(20.dp))
+            }
+            Spacer(Modifier.size(20.dp))
+            AnimatedVisibility(answerDisplay.isNotBlank()) {
+                Text(answerDisplay)
             }
         }
     }
 }
 
-private fun dummyMcq(): MultipleChoiceQuestion {
+
+private fun dummyQuestions(): MultipleChoiceQuestion {
     val questionDisplay = "Which of the following is a read-only variable?"
     val choices = listOf(
         CorrectChoice("val quantity = 5", "This is a read-only Int initialized with value 5"),
