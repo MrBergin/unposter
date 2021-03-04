@@ -1,12 +1,8 @@
-package mr.bergin.unposter.desktop
+package mr.bergin.common
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.desktop.Window
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -18,7 +14,8 @@ import arrow.core.orNull
 import mr.bergin.unposter.model.*
 
 @ExperimentalAnimationApi
-fun main() = Window {
+@Composable
+fun App() {
     val user = User("Jordan")
     var answerDisplay by remember { mutableStateOf("") }
     val question = dummyQuestions()
@@ -36,24 +33,28 @@ fun main() = Window {
     }
 
     MaterialTheme {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(question.display)
-            Spacer(Modifier.size(20.dp))
-            Row (verticalAlignment = Alignment.CenterVertically) {
-                question.choices.forEach {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(question.display)
+                Spacer(Modifier.size(20.dp))
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    question.choices.forEach {
+                        Spacer(Modifier.size(20.dp))
+                        it.toButton()
+                    }
                     Spacer(Modifier.size(20.dp))
-                    it.toButton()
                 }
                 Spacer(Modifier.size(20.dp))
-            }
-            Spacer(Modifier.size(20.dp))
-            AnimatedVisibility(answerDisplay.isNotBlank()) {
-                Text(answerDisplay)
+                AnimatedVisibility(answerDisplay.isNotBlank()) {
+                    Text(answerDisplay)
+                }
             }
         }
     }
 }
-
 
 private fun dummyQuestions(): MultipleChoiceQuestion {
     val questionDisplay = "Which of the following is a read-only variable?"

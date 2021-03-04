@@ -1,18 +1,17 @@
 plugins {
-    id("org.jetbrains.compose")
     id("com.android.application")
     kotlin("android")
+    id("org.jetbrains.compose")
 }
 
 group = "mr.bergin"
 version = "1.0"
 
-repositories {
-    google()
-}
-
 dependencies {
     implementation(project(":common-ui"))
+    implementation("androidx.activity:activity-compose:1.3.0-alpha02")
+    implementation("androidx.appcompat:appcompat:1.3.0-beta01")
+    api("androidx.core:core-ktx:1.3.1")
 }
 
 android {
@@ -28,5 +27,8 @@ android {
         getByName("release") {
             isMinifyEnabled = false
         }
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }

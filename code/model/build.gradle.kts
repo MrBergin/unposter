@@ -9,7 +9,6 @@ group = "mr.bergin"
 version = "0.0.1"
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
     api("io.arrow-kt:arrow-core:0.11.0")
     api("org.jetbrains.kotlinx:kotlinx-datetime:0.1.1")
 
@@ -22,8 +21,6 @@ dependencies {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
-        languageVersion = "1.5"
-        apiVersion = "1.5"
     }
 }
 

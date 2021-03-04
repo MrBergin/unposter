@@ -2,32 +2,22 @@ import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-    kotlin("multiplatform")
+    kotlin("jvm")
     id("org.jetbrains.compose")
 }
 
 group = "mr.bergin"
 version = "1.0"
 
-kotlin {
-    jvm {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-                languageVersion = "1.5"
-                apiVersion = "1.5"
-            }
-        }
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
-    sourceSets {
-        val jvmMain by getting {
-            dependencies {
-                implementation(project(":model"))
-                implementation(compose.desktop.currentOs)
-            }
-        }
-        val jvmTest by getting
-    }
+}
+
+dependencies {
+    implementation(project(":common-ui"))
+    implementation(compose.desktop.currentOs)
 }
 
 compose.desktop {

@@ -20,7 +20,7 @@ pluginManagement {
                 useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.31")
             }
             if (requested.id.id.startsWith("org.jetbrains.compose")) {
-                useModule("org.jetbrains.compose:compose-gradle-plugin:0.3.1")
+                useModule("org.jetbrains.compose:compose-gradle-plugin:0.3.2")
             }
         }
     }
@@ -29,9 +29,10 @@ pluginManagement {
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
+        jcenter()
+        google()
         maven(url = "https://kotlin.bintray.com/kotlinx/")
         maven("https://dl.bintray.com/arrow-kt/arrow-kt/")
-        mavenCentral()
         maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
     }
 }

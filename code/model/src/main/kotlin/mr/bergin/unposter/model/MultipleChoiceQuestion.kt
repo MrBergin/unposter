@@ -6,6 +6,10 @@ import arrow.core.extensions.validated.functor.map
 import arrow.core.invalidNel
 import arrow.core.valid
 
+sealed class Question<out A : Answer> {
+    abstract val answer: A
+}
+
 class MultipleChoiceQuestion private constructor(
     val display: String,
     val choices: Set<Choice>,
