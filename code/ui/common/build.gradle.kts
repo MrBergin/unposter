@@ -1,22 +1,39 @@
 import org.jetbrains.compose.compose
 
 plugins {
-    kotlin("jvm")
+    kotlin("multiplatform")
     id("org.jetbrains.compose")
 }
 
 group = "mr.bergin"
 version = "1.0"
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.8"
+kotlin {
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+    }
+    sourceSets {
+        val jvmMain by getting {
+            dependencies {
+                implementation(project(":model"))
+                api(compose.runtime)
+                api(compose.foundation)
+                api(compose.material)
+            }
+        }
+        val jvmTest by getting {
+            dependencies {
+                implementation("io.kotest:kotest-assertions-core:4.4.1")
+                implementation("io.kotest:kotest-assertions-arrow-jvm:4.4.1")
+                implementation("io.kotest:kotest-runner-junit5:4.4.1")
+                implementation(kotlin("test-junit"))
+            }
+        }
     }
 }
 
-dependencies {
-    implementation(project(":model"))
-    api(compose.runtime)
-    api(compose.foundation)
-    api(compose.material)
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

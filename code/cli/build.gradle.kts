@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm")
+    kotlin("multiplatform")
     kotlin("kapt")
 }
 
@@ -9,16 +9,25 @@ group = "mr.bergin"
 version = "0.0.1"
 
 dependencies {
-    implementation(project(":model"))
 
-    testImplementation("io.kotest:kotest-assertions-core:4.4.1")
-    testImplementation("io.kotest:kotest-runner-junit5:4.4.1")
-    testImplementation(kotlin("test-junit"))
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.8"
+kotlin {
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+    }
+    sourceSets {
+        val jvmMain by getting {
+            dependencies {
+                implementation(project(":model"))
+
+
+            }
+        }
+        val jvmTest by getting {
+        }
     }
 }
 
