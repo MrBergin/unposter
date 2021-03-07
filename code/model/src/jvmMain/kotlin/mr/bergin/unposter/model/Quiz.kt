@@ -5,6 +5,8 @@ class Quiz(
     val questionPool: List<Question<*>>,
 )
 
+fun Quiz.complete(answers: Set<AnsweredQuestion<*>>) = CompletedQuiz(this, answers)
+
 class CompletedQuiz(
     val quiz: Quiz,
     val answers: Set<AnsweredQuestion<*>>,
