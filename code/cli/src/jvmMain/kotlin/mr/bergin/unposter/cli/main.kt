@@ -52,3 +52,6 @@ private fun dummyMcq(): MultipleChoiceQuestion {
     ).map { it.orNull()!! }.toSet()
     return MultipleChoiceQuestion(questionDisplay, choices).orNull()!!
 }
+
+
+private fun dummyQuiz() = Quiz("Dummy Quiz", listOf(dummyMcq()))
