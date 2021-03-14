@@ -13,6 +13,11 @@ kotlin {
         }
     }
     sourceSets {
+        val commonMain by getting {
+            dependencies {
+                api("dev.forkhandles:result4k:LOCAL")
+            }
+        }
         val jvmMain by getting {
             dependencies {
                 api("io.arrow-kt:arrow-core:0.11.0")

@@ -29,6 +29,7 @@ pluginManagement {
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
+        mavenLocal()
         jcenter()
         google()
         maven(url = "https://kotlin.bintray.com/kotlinx/")
