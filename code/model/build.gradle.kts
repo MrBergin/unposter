@@ -18,6 +18,11 @@ kotlin {
                 api("dev.forkhandles:result4k:LOCAL")
             }
         }
+        val commonTest by getting {
+            dependencies {
+                implementation("mr.bergin:result4kotest:LOCAL")
+            }
+        }
         val jvmMain by getting {
             dependencies {
                 api("io.arrow-kt:arrow-core:0.11.0")

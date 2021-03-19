@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import arrow.core.orNull
+import dev.forkhandles.result4k.valueOrNull
 import mr.bergin.unposter.model.*
 
 @ExperimentalAnimationApi
@@ -58,11 +59,11 @@ fun App() {
 
 private fun dummyQuestions(): MultipleChoiceQuestion {
     val questionDisplay = "Which of the following is a read-only variable?"
-    val choices = listOf(
+    val choices = setOf(
         CorrectChoice("val quantity = 5", "This is a read-only Int initialized with value 5"),
         IncorrectChoice("var name = \"Hello!\"", "This is variable which can be reassigned"),
         IncorrectChoice("fun result() = true", "This is a function declaration, not a variable"),
         IncorrectChoice("class Robot", "This is a class, not a variable"),
-    ).map { it.orNull()!! }.toSet()
+    ).map { it.valueOrNull()!! }.toSet()
     return MultipleChoiceQuestion(questionDisplay, choices).orNull()!!
 }

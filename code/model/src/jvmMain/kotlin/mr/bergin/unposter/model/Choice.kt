@@ -1,10 +1,8 @@
 package mr.bergin.unposter.model
 
-import arrow.core.Validated
-import arrow.core.extensions.applicativeNel
-import arrow.core.extensions.validated.functor.map
-import arrow.core.invalidNel
-import arrow.core.valid
+import dev.forkhandles.result4k.Failure
+import dev.forkhandles.result4k.Result
+import dev.forkhandles.result4k.Success
 
 sealed class Choice(
     val display: String,
@@ -15,19 +13,26 @@ sealed class Choice(
             display: String,
             explanation: String,
             factory: (String, String) -> K,
-        ) = Validated.applicativeNel<ChoiceError>().tupledN(
-            ChoiceDisplayIsBlank.validate(display),
-            ChoiceExplanationIsBlank.validate(explanation)
-        ).map {
-            factory(display, explanation)
+        ): Result<Choice, List<ChoiceError>> {
+            val errors = listOf(
+                ChoiceDisplayIsBlank.validate(display),
+                ChoiceExplanationIsBlank.validate(explanation),
+            ).filterIsInstance<Failure<ChoiceError>>().map { it.reason }
+            if (errors.isNotEmpty()) {
+                return Failure(errors)
+            } else {
+                return Success(factory(display, explanation))
+            }
         }
     }
 }
+
 class IncorrectChoice private constructor(display: String, explanation: String) : Choice(display, explanation) {
     companion object {
         operator fun invoke(display: String, explanation: String) = create(display, explanation, ::IncorrectChoice)
     }
 }
+
 class CorrectChoice private constructor(display: String, explanation: String) : Choice(display, explanation) {
     companion object {
         operator fun invoke(display: String, explanation: String) = create(display, explanation, ::CorrectChoice)
@@ -37,15 +42,16 @@ class CorrectChoice private constructor(display: String, explanation: String) : 
 sealed class ChoiceError
 object ChoiceDisplayIsBlank : ChoiceError() {
     fun validate(display: String) = if (display.isBlank()) {
-        this.invalidNel()
+        Failure(this)
     } else {
-        display.valid()
+        Success(display)
     }
 }
+
 object ChoiceExplanationIsBlank : ChoiceError() {
     fun validate(explanation: String) = if (explanation.isBlank()) {
-        this.invalidNel()
+        Failure(this)
     } else {
-        explanation.valid()
+        Success(explanation)
     }
 }
