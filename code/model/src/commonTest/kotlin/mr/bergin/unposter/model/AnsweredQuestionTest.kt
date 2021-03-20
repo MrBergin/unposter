@@ -6,7 +6,6 @@ import mr.bergin.unposter.model.AnswerResult.Right
 import mr.bergin.unposter.model.AnswerResult.Wrong
 
 class AnsweredQuestionTest : StringSpec({
-
     "when question is answered incorrectly, then result should be wrong" {
         val askedQuestion = validUser().ask(validMultipleChoiceQuestion())
         val incorrectAnswer = MultipleChoiceAnswer(

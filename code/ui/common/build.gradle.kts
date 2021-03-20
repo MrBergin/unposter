@@ -25,8 +25,8 @@ kotlin {
         }
         val jvmTest by getting {
             dependencies {
-                implementation("io.kotest:kotest-assertions-core:4.4.1")
-                implementation("io.kotest:kotest-runner-junit5:4.4.1")
+                implementation("io.kotest:kotest-assertions-core:4.4.3")
+                implementation("io.kotest:kotest-runner-junit5:4.4.3")
                 implementation(kotlin("test-junit"))
             }
         }
