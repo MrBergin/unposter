@@ -33,7 +33,6 @@ dependencyResolutionManagement {
         jcenter()
         google()
         maven(url = "https://kotlin.bintray.com/kotlinx/")
-        maven("https://dl.bintray.com/arrow-kt/arrow-kt/")
         maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
     }
 }
