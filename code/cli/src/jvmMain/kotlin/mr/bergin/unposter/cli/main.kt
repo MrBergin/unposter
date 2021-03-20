@@ -1,7 +1,5 @@
 package mr.bergin.unposter.cli
 
-import arrow.core.extensions.list.foldable.firstOption
-import arrow.core.orNull
 import dev.forkhandles.result4k.valueOrNull
 import mr.bergin.unposter.model.*
 
@@ -29,11 +27,11 @@ fun main() {
     while (response != "exit") {
         response = readLine()!!
 
-        val selectedChoice = choicesIndexed.firstOption { it.first == response }
-            .map { it.second }
-            .map(::setOf)
-            .map(::MultipleChoiceAnswer)
-            .map(askedQuestion::answerWith).orNull() ?: continue
+        val selectedChoice = choicesIndexed.firstOrNull { it.first == response }
+            ?.run { second }
+            ?.run(::setOf)
+            ?.run(::MultipleChoiceAnswer)
+            ?.run(askedQuestion::answerWith) ?: continue
 
         val explanation = selectedChoice.answer.choices.first().explanation
 
@@ -51,7 +49,7 @@ private fun dummyMcq(): MultipleChoiceQuestion {
         IncorrectChoice("fun result() = true", "This is a function declaration, not a variable"),
         IncorrectChoice("class Robot", "This is a class, not a variable"),
     ).map { it.valueOrNull()!! }.toSet()
-    return MultipleChoiceQuestion(questionDisplay, choices).orNull()!!
+    return MultipleChoiceQuestion(questionDisplay, choices).valueOrNull()!!
 }
 
 

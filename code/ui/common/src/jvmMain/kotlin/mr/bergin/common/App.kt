@@ -10,7 +10,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import arrow.core.orNull
 import dev.forkhandles.result4k.valueOrNull
 import mr.bergin.unposter.model.*
 
@@ -65,5 +64,5 @@ private fun dummyQuestions(): MultipleChoiceQuestion {
         IncorrectChoice("fun result() = true", "This is a function declaration, not a variable"),
         IncorrectChoice("class Robot", "This is a class, not a variable"),
     ).map { it.valueOrNull()!! }.toSet()
-    return MultipleChoiceQuestion(questionDisplay, choices).orNull()!!
+    return MultipleChoiceQuestion(questionDisplay, choices).valueOrNull()!!
 }

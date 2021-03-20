@@ -1,10 +1,9 @@
 package mr.bergin.unposter.model
 
-import arrow.core.Validated
-import arrow.core.extensions.applicativeNel
-import arrow.core.extensions.validated.functor.map
-import arrow.core.invalidNel
-import arrow.core.valid
+import dev.forkhandles.result4k.Failure
+import dev.forkhandles.result4k.Success
+import dev.forkhandles.result4k.flatMap
+import dev.forkhandles.result4k.map
 
 sealed class Question<out A : Answer> {
     abstract val answer: A
@@ -18,14 +17,11 @@ class MultipleChoiceQuestion private constructor(
     override val answer = MultipleChoiceAnswer(choices.filterIsInstance<CorrectChoice>().toSet())
 
     companion object {
-        operator fun invoke(display: String, choices: Set<Choice>) =
-            Validated.applicativeNel<MultipleChoiceQuestionError>().tupledN(
-                McqDisplayIsBlank.validate(display),
-                McqNotEnoughCorrectChoices.validate(choices),
-                McqNotEnoughInCorrectChoices.validate(choices),
-            ).map {
-                MultipleChoiceQuestion(display, choices)
-            }
+        operator fun invoke(display: String, choices: Set<Choice>) = McqDisplayIsBlank.validate(display).flatMap {
+            McqNotEnoughCorrectChoices.validate(choices)
+        }.flatMap {
+            McqNotEnoughInCorrectChoices.validate(choices)
+        }.map { MultipleChoiceQuestion(display, choices) }
     }
 }
 
@@ -33,18 +29,18 @@ sealed class MultipleChoiceQuestionError
 
 object McqDisplayIsBlank : MultipleChoiceQuestionError() {
     fun validate(display: String) = if (display.isBlank()) {
-        this.invalidNel()
+        Failure(this)
     } else {
-        display.valid()
+        Success(display)
     }
 }
 
 data class McqNotEnoughCorrectChoices(val choices: Set<Choice>) : MultipleChoiceQuestionError() {
     companion object {
         fun validate(choices: Set<Choice>) = if (choices.noneAre<CorrectChoice>()) {
-            McqNotEnoughCorrectChoices(choices).invalidNel()
+            Failure(McqNotEnoughCorrectChoices(choices))
         } else {
-            choices.valid()
+            Success(choices)
         }
     }
 }
@@ -52,9 +48,9 @@ data class McqNotEnoughCorrectChoices(val choices: Set<Choice>) : MultipleChoice
 data class McqNotEnoughInCorrectChoices(val choices: Set<Choice>) : MultipleChoiceQuestionError() {
     companion object {
         fun validate(choices: Set<Choice>) = if (choices.noneAre<IncorrectChoice>()) {
-            McqNotEnoughInCorrectChoices(choices).invalidNel()
+            Failure(McqNotEnoughInCorrectChoices(choices))
         } else {
-            choices.valid()
+            Success(choices)
         }
     }
 }

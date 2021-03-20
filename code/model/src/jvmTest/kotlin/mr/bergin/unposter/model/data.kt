@@ -1,6 +1,5 @@
 package mr.bergin.unposter.model
 
-import arrow.core.orNull
 import dev.forkhandles.result4k.valueOrNull
 
 fun validMultipleChoiceQuestion() = MultipleChoiceQuestion(
@@ -8,6 +7,6 @@ fun validMultipleChoiceQuestion() = MultipleChoiceQuestion(
     setOf(CorrectChoice("Foo", "Bar"), IncorrectChoice("Baz", "Bart")).map {
         it.valueOrNull()!!
     }.toSet()
-).orNull()!!
+).valueOrNull()!!
 
 fun validUser() = User("Foo")
