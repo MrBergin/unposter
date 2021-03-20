@@ -23,9 +23,7 @@ fun App() {
 
     @Composable
     fun Choice.toButton() = Button(onClick = {
-        val answeredQuestion = run(::setOf)
-            .run(::MultipleChoiceAnswer)
-            .run(askedQuestion::answerWith)
+        val answeredQuestion = askedQuestion.answerWith(MultipleChoiceAnswer(setOf()))
 
         answerDisplay = "${answeredQuestion.result}: $explanation"
     }) {

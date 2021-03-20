@@ -15,7 +15,7 @@ kotlin {
         }
     }
     sourceSets {
-        val jvmMain by getting {
+        val commonMain by getting {
             dependencies {
                 implementation(project(":model"))
                 api(compose.runtime)
@@ -30,6 +30,12 @@ kotlin {
                 implementation(kotlin("test-junit"))
             }
         }
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs = listOf("-XXLanguage:+NewInference")
     }
 }
 
